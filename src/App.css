@@ -1,0 +1,131 @@
+import { useState } from "react";
+
+const categories = [
+  { id: "seguro", icon: "🛡️", label: "Seguros", phase: "Fase 1 · Activo" },
+  { id: "tarjeta", icon: "💳", label: "Tarjetas", phase: "Fase 2" },
+  { id: "hipoteca", icon: "🏠", label: "Hipoteca", phase: "Fase 2" },
+  { id: "internet", icon: "📶", label: "Internet", phase: "Fase 3" },
+  { id: "inversion", icon: "📈", label: "Inversiones", phase: "Fase 4" },
+  { id: "universidad", icon: "🎓", label: "Universidad", phase: "Fase 4" },
+];
+
+const systemPrompts = {
+  seguro: "Eres el asesor de seguros de MANZ AI para México. Haz máximo 2-3 preguntas cortas para entender la situación del usuario y recomienda el mejor seguro. Menciona aseguradoras reales mexicanas (GNP, AXA, Qualitas, Metlife, HDI, Atlas, MAPFRE). Cuando recomiendes usa formato 🥇🥈🥉 con nombre y razón específica. Lenguaje simple y directo.",
+  tarjeta: "Eres el asesor de tarjetas de crédito de MANZ AI para México. Haz 2-3 preguntas y recomienda tarjetas reales (BBVA, Citibanamex, Santander, Amex, Banorte). Formato 🥇🥈🥉. Simple y directo.",
+  hipoteca: "Eres el asesor hipotecario de MANZ AI para México. Haz 2-3 preguntas y recomienda opciones reales (INFONAVIT, FOVISSSTE, bancos). Menciona tasas aproximadas. Formato 🥇🥈🥉.",
+  internet: "Eres el asesor de telecomunicaciones de MANZ AI para México. Haz 2-3 preguntas y recomienda proveedores reales (Telmex, Megacable, Izzi, Total Play). Formato 🥇🥈🥉.",
+  inversion: "Eres el asesor de inversiones de MANZ AI para México. Haz 2-3 preguntas sobre perfil y monto. Recomienda opciones reales (CETES, GBM, Nu, Fondeadora). Formato 🥇🥈🥉.",
+  universidad: "Eres el asesor educativo de MANZ AI para México. Haz 2-3 preguntas sobre carrera y ciudad. Recomienda universidades reales con argumentos. Formato 🥇🥈🥉.",
+};
+
+const firstMessages = {
+  seguro: "¡Hola! Soy tu asesor de seguros 👋\n¿Qué tipo de seguro estás buscando?\n\n• Auto\n• Gastos médicos\n• Vida",
+  tarjeta: "¡Hola! Te ayudo a encontrar la mejor tarjeta de crédito 💳\n¿Cuál es tu ingreso mensual aproximado?",
+  hipoteca: "¡Hola! Te ayudo con tu crédito hipotecario 🏠\n¿Cuánto vale la propiedad que quieres comprar?",
+  internet: "¡Hola! Encontremos el mejor plan de internet para ti 📶\n¿En qué ciudad vives y cuántos dispositivos conectarías?",
+  inversion: "¡Hola! Te ayudo a invertir mejor tu dinero 📈\n¿Cuánto quieres invertir y en cuánto tiempo necesitarías ese dinero?",
+  universidad: "¡Hola! Te ayudo a elegir la mejor universidad 🎓\n¿Qué carrera te interesa y en qué ciudad vives?",
+};
+
+export default function App() {
+  const [cat, setCat] = useState("seguro");
+  const [messages, setMessages] = useState([{ role: "ai", text: firstMessages["seguro"] }]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
+
+  const selectCat = (id) => {
+    setCat(id);
+    setMessages([{ role: "ai", text: firstMessages[id] }]);
+    setHistory([]);
+    setInput("");
+  };
+
+  const sendMsg = async (override) => {
+    const text = override || input.trim();
+    if (!text || loading) return;
+    setInput("");
+    const newMessages = [...messages, { role: "user", text }];
+    setMessages(newMessages);
+    setLoading(true);
+    const newHistory = [...history, { role: "user", content: text }];
+    try {
+      const res = await fetch("http://localhost:3001/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: systemPrompts[cat],
+          messages: newHistory,
+        }),
+      });
+      const data = await res.json();
+      const reply = data.content[0].text;
+      setMessages([...newMessages, { role: "ai", text: reply }]);
+      setHistory([...newHistory, { role: "assistant", content: reply }]);
+    } catch (e) {
+      setMessages([...newMessages, { role: "ai", text: "Error de conexión, intenta de nuevo." }]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={styles.app}>
+      <div style={styles.header}>
+        <div style={styles.logo}>
+          <div style={styles.logoIcon}>✦</div>
+          <span style={styles.logoText}>MANZ <span style={{ color: "#6366f1" }}>AI</span></span>
+        </div>
+        <p style={styles.tagline}>Tu asesor inteligente para decisiones importantes</p>
+      </div>
+      <div style={styles.categories}>
+        {categories.map((c) => (
+          <button key={c.id} onClick={() => selectCat(c.id)} style={{ ...styles.catBtn, ...(cat === c.id ? styles.catBtnActive : {}) }}>
+            <span style={{ fontSize: 22 }}>{c.icon}</span>
+            <span style={{ fontSize: 12, fontWeight: 500 }}>{c.label}</span>
+            <span style={{ fontSize: 10, color: cat === c.id ? "#6366f1" : "#9ca3af" }}>{c.phase}</span>
+          </button>
+        ))}
+      </div>
+      <div style={styles.chat}>
+        <div style={styles.messages}>
+          {messages.map((m, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start", marginBottom: 10 }}>
+              <div style={{ ...styles.bubble, background: m.role === "user" ? "#6366f1" : "#1f2937", color: m.role === "user" ? "#fff" : "#f3f4f6", borderRadius: m.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px" }}>
+                {m.text.split("\n").map((line, j) => <div key={j}>{line}</div>)}
+              </div>
+            </div>
+          ))}
+          {loading && (
+            <div style={{ display: "flex", gap: 6, padding: "10px 0" }}>
+              {[0, 1, 2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366f1", animation: "bounce 1.2s infinite", animationDelay: `${i * 0.2}s` }} />)}
+            </div>
+          )}
+        </div>
+        <div style={styles.inputRow}>
+          <input style={styles.input} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendMsg()} placeholder="Escribe tu situación aquí..." />
+          <button style={styles.sendBtn} onClick={() => sendMsg()}>➤</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  app: { maxWidth: 680, margin: "0 auto", padding: "24px 16px", fontFamily: "system-ui, sans-serif", background: "#111827", minHeight: "100vh", color: "#fff" },
+  header: { textAlign: "center", marginBottom: 24 },
+  logo: { display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 8 },
+  logoIcon: { width: 36, height: 36, background: "#6366f1", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 },
+  logoText: { fontSize: 22, fontWeight: 600 },
+  tagline: { color: "#9ca3af", fontSize: 14 },
+  categories: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 20 },
+  catBtn: { background: "#1f2937", border: "1px solid #374151", borderRadius: 10, padding: "10px 8px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, color: "#fff" },
+  catBtnActive: { background: "#312e81", border: "1px solid #6366f1" },
+  chat: { background: "#1f2937", borderRadius: 14, overflow: "hidden", border: "1px solid #374151" },
+  messages: { padding: 16, minHeight: 320, maxHeight: 400, overflowY: "auto" },
+  bubble: { maxWidth: "80%", padding: "10px 14px", fontSize: 14, lineHeight: 1.6 },
+  inputRow: { display: "flex", gap: 8, padding: 12, borderTop: "1px solid #374151" },
+  input: { flex: 1, padding: "10px 14px", borderRadius: 10, border: "1px solid #374151", background: "#111827", color: "#fff", fontSize: 14, outline: "none" },
+  sendBtn: { width: 42, height: 42, background: "#6366f1", border: "none", borderRadius: 10, color: "#fff", fontSize: 18, cursor: "pointer" },
+};
