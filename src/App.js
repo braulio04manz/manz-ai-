@@ -57,7 +57,7 @@ export default function App() {
     setLoading(true);
     const newHist = [...history, { role: "user", content: text }];
     try {
-      const res = await fetch("http://localhost:3001/api/chat", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system: sysP[cat], messages: newHist }),
