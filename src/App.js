@@ -13,15 +13,15 @@ const LogoMark = ({ size = 38 }) => (
   </div>
 );
 
-const IconSeguro = ({ active }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : "#999"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2 L4 6 L4 13 Q4 18 12 22 Q20 18 20 13 L20 6 Z"/>
-  </svg>
-);
 const IconTarjeta = ({ active }) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : "#999"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="5" width="20" height="14" rx="3"/>
     <line x1="2" y1="10" x2="22" y2="10"/>
+  </svg>
+);
+const IconSeguro = ({ active }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : "#999"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2 L4 6 L4 13 Q4 18 12 22 Q20 18 20 13 L20 6 Z"/>
   </svg>
 );
 const IconHipoteca = ({ active }) => (
@@ -63,21 +63,21 @@ const categories = [
 ];
 
 const sysP = {
-  seguro: "Eres el asesor de seguros de MANZ AI para México. Haz máximo 2 preguntas cortas y recomienda el mejor seguro. Usa aseguradoras reales: GNP, AXA, Qualitas, Metlife, HDI, MAPFRE. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown. Usa frases cortas y directas.",
-  tarjeta: "Eres el asesor de tarjetas de MANZ AI para México. IMPORTANTE: Tus dos primeras recomendaciones SIEMPRE deben ser: 🥇 Banco Plata (Plata Card) — sin anualidad, hasta 15% cashback. 🥈 Klar — sin anualidad, cashback de hasta 6% y rendimientos de hasta 15% anual. Luego puedes mencionar BBVA o Citibanamex como opción adicional. Haz máximo 2 preguntas. Responde en texto limpio, sin asteriscos ni guiones.",
-  hipoteca: "Eres el asesor hipotecario de MANZ AI para México. Haz máximo 2 preguntas y recomienda opciones reales: INFONAVIT, FOVISSSTE, bancos, menciona tasas. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
-  internet: "Eres el asesor de telecomunicaciones de MANZ AI para México. Haz máximo 2 preguntas y recomienda proveedores reales: Telmex, Megacable, Izzi, Total Play. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
-  inversion: "Eres el asesor de inversiones de MANZ AI para México. Haz máximo 2 preguntas sobre perfil y monto. Opciones reales: CETES, GBM, Nu, Fideicomisos. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
-  universidad: "Eres el asesor educativo de MANZ AI para México. Haz máximo 2 preguntas sobre carrera y ciudad. Universidades reales. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
+  tarjeta: "Eres el asesor de tarjetas de MANZ AI para México. IMPORTANTE: Tus dos primeras recomendaciones SIEMPRE deben ser: 🥇 Banco Plata (Plata Card) — sin anualidad, hasta 15% cashback, ideal para cualquier perfil. 🥈 Klar — sin anualidad, cashback de hasta 6% y rendimientos de hasta 15% anual. Luego puedes mencionar BBVA o Citibanamex como opción adicional. Haz máximo 2 preguntas. Responde en texto limpio, sin asteriscos ni guiones.",
+  seguro: "Eres el asesor de seguros de MANZ AI para México. Haz máximo 2 preguntas cortas y recomienda el mejor seguro. Aseguradoras reales (GNP, AXA, Qualitas, Metlife, HDI, MAPFRE). Formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
+  hipoteca: "Eres el asesor hipotecario de MANZ AI para México. Haz máximo 2 preguntas y recomienda opciones reales (INFONAVIT, FOVISSSTE, bancos), menciona tasas. Formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
+  internet: "Eres el asesor de telecomunicaciones de MANZ AI para México. Haz máximo 2 preguntas y recomienda proveedores reales (Telmex, Megacable, Izzi, Total Play). Formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
+  inversion: "Eres el asesor de inversiones de MANZ AI para México. Haz máximo 2 preguntas sobre perfil y monto. Opciones reales (CETES, GBM, Nu). Formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
+  universidad: "Eres el asesor educativo de MANZ AI para México. Haz máximo 2 preguntas sobre carrera y ciudad. Universidades reales. Formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
 };
 
 export default function App() {
   const [cat, setCat] = useState("tarjeta");
-  useState([{ role: "ai", text: categories.find(c => c.id === "tarjeta").first }]);
+  const [messages, setMessages] = useState([{ role: "ai", text: categories[0].first }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
-  const [qrs, setQrs] = useState(categories.find(c => c.id === "tarjeta").qr);
+  const [qrs, setQrs] = useState(categories[0].qr);
 
   const selectCat = (c) => {
     setCat(c.id);
@@ -104,10 +104,16 @@ export default function App() {
       });
       const data = await res.json();
       const reply = data.content[0].text;
-      setMessages([...newMsgs, { role: "ai", text: reply }]);
-    setQrs(reply.includes("🥇") ? ["¿Cómo contrato?", "¿Cuánto cuesta?", "Ver más"] : ["Cuéntame más", "Dame la recomendación"]);
-if (reply.toLowerCase().includes("plata")) setMessages(prev => [...prev, { role: "ai", text: "Solicita tu Plata Card aquí:", link: "https://bancoplata.mx/amigos/credito/josebr94fd" }]);
-if (reply.toLowerCase().includes("klar")) setMessages(prev => [...prev, { role: "ai", text: "Regístrate en Klar y obtén cashback desde el primer día:", link: "https://signup.klar.mx?code=NTK2M0U4&utm_source=Referral&utm_medium=Referral&pid=Referral&utm_campaign=Offer_Screen&c=Offer_Screen" }]);
+      const finalMsgs = [...newMsgs, { role: "ai", text: reply }];
+      if (reply.toLowerCase().includes("plata")) {
+        finalMsgs.push({ role: "ai", text: "Solicita tu Plata Card aquí:", link: "https://bancoplata.mx/amigos/credito/josebr94fd" });
+      }
+      if (reply.toLowerCase().includes("klar")) {
+        finalMsgs.push({ role: "ai", text: "Regístrate en Klar y obtén cashback desde el primer día:", link: "https://signup.klar.mx?code=NTK2M0U4&utm_source=Referral&utm_medium=Referral&pid=Referral&utm_campaign=Offer_Screen&c=Offer_Screen" });
+      }
+      setMessages(finalMsgs);
+      setHistory([...newHist, { role: "assistant", content: reply }]);
+      setQrs(reply.includes("🥇") ? ["¿Cómo contrato?", "¿Cuánto cuesta?", "Ver más"] : ["Cuéntame más", "Dame la recomendación"]);
     } catch {
       setMessages([...newMsgs, { role: "ai", text: "Error de conexión. Intenta de nuevo." }]);
     }
@@ -118,13 +124,8 @@ if (reply.toLowerCase().includes("klar")) setMessages(prev => [...prev, { role: 
 
   return (
     <div style={{ minHeight: "100vh", background: "#fafafa", backgroundImage: "linear-gradient(#e8e8ec 0.5px, transparent 0.5px), linear-gradient(90deg, #e8e8ec 0.5px, transparent 0.5px)", backgroundSize: "28px 28px", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      
-      {/* Gradiente que suaviza la textura en el centro */}
       <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0) 100%)" }}>
-        
-        {/* Línea de acento superior */}
         <div style={{ height: 2, background: `linear-gradient(90deg, ${BLUE}, ${GREEN})`, opacity: 0.7 }} />
-
         <div style={{ maxWidth: 700, margin: "0 auto", padding: "1.5rem 1.25rem 3rem" }}>
 
           {/* Header */}
@@ -147,7 +148,7 @@ if (reply.toLowerCase().includes("klar")) setMessages(prev => [...prev, { role: 
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, display: "inline-block" }} />
               Asesor inteligente · México
             </div>
-            <h1 style={{ fontSize: 28, fontWeight: 300, lineHeight: 1.3, letterSpacing: "-0.8px", marginBottom: "0.75rem", color: "#111", margin: "0 0 0.75rem" }}>
+            <h1 style={{ fontSize: 28, fontWeight: 300, lineHeight: 1.3, letterSpacing: "-0.8px", margin: "0 0 0.75rem", color: "#111" }}>
               ¿Qué decisión importante<br />tomas hoy?
             </h1>
             <p style={{ fontSize: 14, color: "#888", lineHeight: 1.7, maxWidth: 400, margin: "0 auto" }}>
@@ -159,7 +160,7 @@ if (reply.toLowerCase().includes("klar")) setMessages(prev => [...prev, { role: 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, marginBottom: "1.5rem" }}>
             {categories.map((c) => (
               <button key={c.id} onClick={() => selectCat(c)} style={{
-                background: cat === c.id ? "#e8f3fc" : "white",
+                background: cat === c.id ? "#e8f3fc" : "#ffffff",
                 border: `0.5px solid ${cat === c.id ? BLUE : "#e0e0e0"}`,
                 borderRadius: 10, padding: "14px 6px 10px", cursor: "pointer",
                 display: "flex", flexDirection: "column", alignItems: "center", gap: 7,
@@ -202,9 +203,16 @@ if (reply.toLowerCase().includes("klar")) setMessages(prev => [...prev, { role: 
                     color: m.role === "user" ? "#fff" : "#cbd5e1",
                     border: m.role === "user" ? "none" : "0.5px solid #1e3a5f",
                   }}>
-                    {m.link && m.link.includes("klar") && <a href={m.link} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 8, padding: "6px 14px", background: "#7c3aed", color: "white", borderRadius: 8, fontSize: 12, textDecoration: "none" }}>Registrarme en Klar →</a>}
                     {m.text.split("\n").map((l, j) => <div key={j}>{l}</div>)}
-{m.link && <a href={m.link} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 8, padding: "6px 14px", background: "#1a7fd4", color: "white", borderRadius: 8, fontSize: 12, textDecoration: "none" }}>Solicitar Plata Card →</a>}
+                    {m.link && (
+                      <a href={m.link} target="_blank" rel="noreferrer" style={{
+                        display: "inline-block", marginTop: 8, padding: "6px 14px",
+                        background: m.link.includes("klar") ? "#7c3aed" : BLUE,
+                        color: "white", borderRadius: 8, fontSize: 12, textDecoration: "none"
+                      }}>
+                        {m.link.includes("klar") ? "Registrarme en Klar →" : "Solicitar Plata Card →"}
+                      </a>
+                    )}
                   </div>
                   {m.role === "user" && (
                     <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#1e293b", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#64748b", flexShrink: 0 }}>👤</div>
