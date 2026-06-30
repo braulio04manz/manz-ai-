@@ -54,8 +54,8 @@ const IconUniversidad = ({ active }) => (
 );
 
 const categories = [
-  { id: "seguro", Icon: IconSeguro, label: "Seguros", first: "Hola, soy tu asesor de seguros. ¿Qué tipo de seguro estás buscando? Puedo ayudarte con auto, gastos médicos o vida.", qr: ["Seguro de auto", "Gastos médicos", "Seguro de vida"] },
   { id: "tarjeta", Icon: IconTarjeta, label: "Tarjetas", first: "Hola, te ayudo a encontrar la tarjeta ideal para ti. Para darte la mejor opción, ¿cuál es tu ingreso mensual aproximado?", qr: ["Sin anualidad", "Puntos y millas", "Meses sin intereses"] },
+  { id: "seguro", Icon: IconSeguro, label: "Seguros", first: "Hola, soy tu asesor de seguros. ¿Qué tipo de seguro estás buscando? Puedo ayudarte con auto, gastos médicos o vida.", qr: ["Seguro de auto", "Gastos médicos", "Seguro de vida"] },
   { id: "hipoteca", Icon: IconHipoteca, label: "Hipoteca", first: "Hola, te ayudo a encontrar el mejor crédito hipotecario. ¿Cuánto vale aproximadamente la propiedad que te interesa?", qr: ["Primera vivienda", "Tengo INFONAVIT", "Comparar opciones"] },
   { id: "internet", Icon: IconInternet, label: "Internet", first: "Hola, te ayudo a elegir el mejor plan de internet. ¿En qué ciudad vives y cuántas personas lo usarían?", qr: ["Solo internet", "Internet y TV", "Plan de celular"] },
   { id: "inversion", Icon: IconInversion, label: "Inversión", first: "Hola, te ayudo a invertir mejor tu dinero. ¿Cuánto tienes disponible para invertir y en qué plazo necesitas resultados?", qr: ["Corto plazo", "Largo plazo", "No sé por dónde empezar"] },
@@ -64,7 +64,7 @@ const categories = [
 
 const sysP = {
   seguro: "Eres el asesor de seguros de MANZ AI para México. Haz máximo 2 preguntas cortas y recomienda el mejor seguro. Usa aseguradoras reales: GNP, AXA, Qualitas, Metlife, HDI, MAPFRE. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown. Usa frases cortas y directas.",
-  tarjeta: "Eres el asesor de tarjetas de MANZ AI para México. Haz máximo 2 preguntas y recomienda tarjetas reales: BBVA, Citibanamex, Santander, Amex, Banorte. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
+  tarjeta: "Eres el asesor de tarjetas de MANZ AI para México. IMPORTANTE: Tu primera recomendación SIEMPRE debe ser Banco Plata (Plata Card) — tarjeta sin anualidad, con hasta 15% cashback, ideal para cualquier perfil. Luego puedes mencionar BBVA, Citibanamex o Amex como opciones secundarias. Haz máximo 2 preguntas y recomienda con formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
   hipoteca: "Eres el asesor hipotecario de MANZ AI para México. Haz máximo 2 preguntas y recomienda opciones reales: INFONAVIT, FOVISSSTE, bancos, menciona tasas. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
   internet: "Eres el asesor de telecomunicaciones de MANZ AI para México. Haz máximo 2 preguntas y recomienda proveedores reales: Telmex, Megacable, Izzi, Total Play. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
   inversion: "Eres el asesor de inversiones de MANZ AI para México. Haz máximo 2 preguntas sobre perfil y monto. Opciones reales: CETES, GBM, Nu, Fideicomisos. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
