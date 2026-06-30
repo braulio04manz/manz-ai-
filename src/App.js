@@ -64,7 +64,7 @@ const categories = [
 
 const sysP = {
   seguro: "Eres el asesor de seguros de MANZ AI para México. Haz máximo 2 preguntas cortas y recomienda el mejor seguro. Usa aseguradoras reales: GNP, AXA, Qualitas, Metlife, HDI, MAPFRE. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown. Usa frases cortas y directas.",
-  tarjeta: "Eres el asesor de tarjetas de MANZ AI para México. IMPORTANTE: Tu primera recomendación SIEMPRE debe ser Banco Plata (Plata Card) — tarjeta sin anualidad, con hasta 15% cashback, ideal para cualquier perfil. Luego puedes mencionar BBVA, Citibanamex o Amex como opciones secundarias. Haz máximo 2 preguntas y recomienda con formato 🥇🥈🥉. Responde en texto limpio, sin asteriscos ni guiones.",
+  tarjeta: "Eres el asesor de tarjetas de MANZ AI para México. IMPORTANTE: Tus dos primeras recomendaciones SIEMPRE deben ser: 🥇 Banco Plata (Plata Card) — sin anualidad, hasta 15% cashback. 🥈 Klar — sin anualidad, cashback de hasta 6% y rendimientos de hasta 15% anual. Luego puedes mencionar BBVA o Citibanamex como opción adicional. Haz máximo 2 preguntas. Responde en texto limpio, sin asteriscos ni guiones.",
   hipoteca: "Eres el asesor hipotecario de MANZ AI para México. Haz máximo 2 preguntas y recomienda opciones reales: INFONAVIT, FOVISSSTE, bancos, menciona tasas. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
   internet: "Eres el asesor de telecomunicaciones de MANZ AI para México. Haz máximo 2 preguntas y recomienda proveedores reales: Telmex, Megacable, Izzi, Total Play. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
   inversion: "Eres el asesor de inversiones de MANZ AI para México. Haz máximo 2 preguntas sobre perfil y monto. Opciones reales: CETES, GBM, Nu, Fideicomisos. Formato con 🥇🥈🥉. IMPORTANTE: responde en texto limpio y natural, sin asteriscos, sin guiones como viñetas, sin markdown.",
@@ -105,13 +105,9 @@ export default function App() {
       const data = await res.json();
       const reply = data.content[0].text;
       setMessages([...newMsgs, { role: "ai", text: reply }]);
-      setHistory([...newHist, { role: "assistant", content: reply }]);
-      setQrs(reply.includes("🥇") ? ["¿Cómo contrato?", "¿Cuánto cuesta?", "Ver más"] : ["Cuéntame más", "Dame la recomendación"]);
-if (reply.toLowerCase().includes("plata")) {
-  setTimeout(() => {
-    setMessages(prev => [...prev, { role: "ai", text: "👉 Solicita tu Plata Card aquí: bancoplata.mx/amigos/credito/josebr94fd", link: "https://bancoplata.mx/amigos/credito/josebr94fd" }]);
-  }, 500);
-}
+    setQrs(reply.includes("🥇") ? ["¿Cómo contrato?", "¿Cuánto cuesta?", "Ver más"] : ["Cuéntame más", "Dame la recomendación"]);
+if (reply.toLowerCase().includes("plata")) setMessages(prev => [...prev, { role: "ai", text: "Solicita tu Plata Card aquí:", link: "https://bancoplata.mx/amigos/credito/josebr94fd" }]);
+if (reply.toLowerCase().includes("klar")) setMessages(prev => [...prev, { role: "ai", text: "Regístrate en Klar y obtén cashback desde el primer día:", link: "https://signup.klar.mx?code=NTK2M0U4&utm_source=Referral&utm_medium=Referral&pid=Referral&utm_campaign=Offer_Screen&c=Offer_Screen" }]);
     } catch {
       setMessages([...newMsgs, { role: "ai", text: "Error de conexión. Intenta de nuevo." }]);
     }
@@ -206,6 +202,7 @@ if (reply.toLowerCase().includes("plata")) {
                     color: m.role === "user" ? "#fff" : "#cbd5e1",
                     border: m.role === "user" ? "none" : "0.5px solid #1e3a5f",
                   }}>
+                    {m.link && m.link.includes("klar") && <a href={m.link} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 8, padding: "6px 14px", background: "#7c3aed", color: "white", borderRadius: 8, fontSize: 12, textDecoration: "none" }}>Registrarme en Klar →</a>}
                     {m.text.split("\n").map((l, j) => <div key={j}>{l}</div>)}
 {m.link && <a href={m.link} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 8, padding: "6px 14px", background: "#1a7fd4", color: "white", borderRadius: 8, fontSize: 12, textDecoration: "none" }}>Solicitar Plata Card →</a>}
                   </div>
