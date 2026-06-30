@@ -72,12 +72,12 @@ const sysP = {
 };
 
 export default function App() {
-  const [cat, setCat] = useState("seguro");
-  const [messages, setMessages] = useState([{ role: "ai", text: categories[0].first }]);
+  const [cat, setCat] = useState("tarjeta");
+  useState([{ role: "ai", text: categories.find(c => c.id === "tarjeta").first }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
-  const [qrs, setQrs] = useState(categories[0].qr);
+  const [qrs, setQrs] = useState(categories.find(c => c.id === "tarjeta").qr);
 
   const selectCat = (c) => {
     setCat(c.id);
