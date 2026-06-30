@@ -198,4 +198,4 @@ export default function App() {
       <style>{`@keyframes pulse { 0%,60%,100%{opacity:.3;transform:scale(1)} 30%{opacity:1;transform:scale(1.15)} }`}</style>
     </div>
   );
-}
+}// Mon Jun 29 18:04:06 CST 2026
