@@ -107,6 +107,11 @@ export default function App() {
       setMessages([...newMsgs, { role: "ai", text: reply }]);
       setHistory([...newHist, { role: "assistant", content: reply }]);
       setQrs(reply.includes("🥇") ? ["¿Cómo contrato?", "¿Cuánto cuesta?", "Ver más"] : ["Cuéntame más", "Dame la recomendación"]);
+if (reply.toLowerCase().includes("plata")) {
+  setTimeout(() => {
+    setMessages(prev => [...prev, { role: "ai", text: "👉 Solicita tu Plata Card aquí: bancoplata.mx/amigos/credito/josebr94fd", link: "https://bancoplata.mx/amigos/credito/josebr94fd" }]);
+  }, 500);
+}
     } catch {
       setMessages([...newMsgs, { role: "ai", text: "Error de conexión. Intenta de nuevo." }]);
     }
@@ -202,6 +207,7 @@ export default function App() {
                     border: m.role === "user" ? "none" : "0.5px solid #1e3a5f",
                   }}>
                     {m.text.split("\n").map((l, j) => <div key={j}>{l}</div>)}
+{m.link && <a href={m.link} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 8, padding: "6px 14px", background: "#1a7fd4", color: "white", borderRadius: 8, fontSize: 12, textDecoration: "none" }}>Solicitar Plata Card →</a>}
                   </div>
                   {m.role === "user" && (
                     <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#1e293b", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#64748b", flexShrink: 0 }}>👤</div>
